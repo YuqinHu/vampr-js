@@ -10,22 +10,35 @@ class Vampire {
 
   // Adds the vampire as an offspring of this vampire
   addOffspring(vampire) {
-
+    this.offspring.push(vampire);
+    vampire.creator = this;
   }
 
   // Returns the total number of vampires created by that vampire
   get numberOfOffspring() {
-
+    return this.offspring.length;
   }
 
   // Returns the number of vampires away from the original vampire this vampire is
   get numberOfVampiresFromOriginal() {
+    let numberOfVampires = 0;
+    let currentVampires = this;
 
+    // climb "up" the tree (using iteration), counting nodes, until no creator is found
+    while (currentVampires.creator) {
+      currentVampires = currentVampires.creator;
+      numberOfVampires++;
+    }
+
+    return numberOfVampires;
   }
 
   // Returns true if this vampire is more senior than the other vampire. (Who is closer to the original vampire)
   isMoreSeniorThan(vampire) {
-
+    if (this.numberOfVampiresFromOriginal > vampire.numberOfVampiresFromOriginal) {
+      return false;
+    }
+    return true;
   }
 
   /** Stretch **/
@@ -35,8 +48,19 @@ class Vampire {
   // For example:
   // * when comparing Ansel and Sarah, Ansel is the closest common anscestor.
   // * when comparing Ansel and Andrew, Ansel is the closest common anscestor.
+  // 4 pass 2 fail
   closestCommonAncestor(vampire) {
-
+    if (!this.creator) {
+      return this;
+    } else if(!vampire.creator) {
+      return vampire;
+    } else if (this === vampire) {
+      return this;
+    }
+    if (this.isMoreSeniorThan(vampire)) {
+      return this.creator;
+    }
+    return vampire.creator;
   }
 }
 
